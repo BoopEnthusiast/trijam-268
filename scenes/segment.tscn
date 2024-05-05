@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4i1qs81jcn3y"]
+
+[ext_resource type="Script" path="res://scripts/segment.gd" id="1_tw82s"]
+[ext_resource type="Texture2D" uid="uid://de7j1agbr01qh" path="res://resources/player.png" id="2_l72kw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xsh4q"]
+size = Vector2(2, 2)
+
+[node name="Segment" type="AnimatableBody2D"]
+z_index = 1
+collision_layer = 2
+collision_mask = 0
+sync_to_physics = false
+script = ExtResource("1_tw82s")
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_xsh4q")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("2_l72kw")

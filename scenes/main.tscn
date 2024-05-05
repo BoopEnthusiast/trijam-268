@@ -1,0 +1,204 @@
+[gd_scene load_steps=20 format=3 uid="uid://co4t0v2nohh46"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_4muk8"]
+[ext_resource type="Texture2D" uid="uid://d32wcjm82eigw" path="res://resources/background.png" id="1_v6ucq"]
+[ext_resource type="PackedScene" uid="uid://c4i1qs81jcn3y" path="res://scenes/segment.tscn" id="2_7ptlc"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="2_nvxl4"]
+[ext_resource type="Texture2D" uid="uid://de7j1agbr01qh" path="res://resources/player.png" id="3_jka6m"]
+[ext_resource type="PackedScene" uid="uid://778gqh0kww1d" path="res://scenes/apple.tscn" id="4_44o8n"]
+[ext_resource type="Texture2D" uid="uid://ep2hoqckdyhn" path="res://resources/cloud.png" id="5_lk4yc"]
+[ext_resource type="Script" path="res://scripts/main_player.gd" id="6_n7l6i"]
+[ext_resource type="FontFile" uid="uid://cu7tveglhvny8" path="res://resources/Pixel64_v1.2.ttf" id="8_7qea7"]
+[ext_resource type="Script" path="res://scripts/score_label.gd" id="9_ovrfq"]
+[ext_resource type="AudioStream" uid="uid://da2m2oc6kk4qo" path="res://resources/Trijam.wav" id="11_04ept"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xsh4q"]
+size = Vector2(4, 4)
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_aa0ve"]
+
+[sub_resource type="Animation" id="Animation_rc7u1"]
+resource_name = "cloud_down"
+length = 120.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Clouds:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 120),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(64, 29), Vector2(64, 64)]
+}
+
+[sub_resource type="Animation" id="Animation_ew5s2"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Clouds:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(64, 29)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_11drw"]
+_data = {
+"RESET": SubResource("Animation_ew5s2"),
+"cloud_down": SubResource("Animation_rc7u1")
+}
+
+[sub_resource type="Theme" id="Theme_pa0wj"]
+default_font = ExtResource("8_7qea7")
+
+[sub_resource type="Theme" id="Theme_48li7"]
+default_font = ExtResource("8_7qea7")
+
+[sub_resource type="Theme" id="Theme_t6vbi"]
+default_font = ExtResource("8_7qea7")
+
+[node name="Main" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1_4muk8")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(76, 41)
+motion_mode = 1
+script = ExtResource("2_nvxl4")
+
+[node name="Collider" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_xsh4q")
+
+[node name="Sprite" type="Sprite2D" parent="Player"]
+z_index = 1
+texture = ExtResource("3_jka6m")
+
+[node name="Walls" type="StaticBody2D" parent="."]
+z_index = -1
+
+[node name="Background" type="Sprite2D" parent="Walls"]
+position = Vector2(64, 64)
+texture = ExtResource("1_v6ucq")
+
+[node name="Top" type="CollisionShape2D" parent="Walls"]
+position = Vector2(63, 0)
+rotation = -3.14159
+shape = SubResource("WorldBoundaryShape2D_aa0ve")
+debug_color = Color(0, 0.6, 0.701961, 0)
+
+[node name="Left" type="CollisionShape2D" parent="Walls"]
+position = Vector2(0, 53)
+rotation = -4.71238
+shape = SubResource("WorldBoundaryShape2D_aa0ve")
+debug_color = Color(0, 0.6, 0.701961, 0)
+
+[node name="Bottom" type="CollisionShape2D" parent="Walls"]
+position = Vector2(63, 128)
+shape = SubResource("WorldBoundaryShape2D_aa0ve")
+debug_color = Color(0, 0.6, 0.701961, 0)
+
+[node name="Right" type="CollisionShape2D" parent="Walls"]
+position = Vector2(128, 53)
+rotation = -7.85397
+shape = SubResource("WorldBoundaryShape2D_aa0ve")
+debug_color = Color(0, 0.6, 0.701961, 0)
+
+[node name="Apple" parent="." instance=ExtResource("4_44o8n")]
+position = Vector2(28, 30)
+
+[node name="Clouds" type="Sprite2D" parent="."]
+position = Vector2(64, 29)
+texture = ExtResource("5_lk4yc")
+
+[node name="MainPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_11drw")
+}
+script = ExtResource("6_n7l6i")
+
+[node name="Segment" parent="." instance=ExtResource("2_7ptlc")]
+position = Vector2(71, 41)
+
+[node name="SpawnTime" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="ScoreLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="ScoreLayer"]
+visible = false
+texture_filter = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_pa0wj")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "LOSER"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score" type="Label" parent="ScoreLayer"]
+texture_filter = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -194.0
+offset_top = -23.0
+offset_right = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = SubResource("Theme_48li7")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Life: 10"
+horizontal_alignment = 2
+vertical_alignment = 2
+script = ExtResource("9_ovrfq")
+
+[node name="Time" type="Label" parent="ScoreLayer"]
+texture_filter = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -23.0
+offset_right = 42.0
+grow_vertical = 0
+theme = SubResource("Theme_t6vbi")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+text = "Time: 0"
+vertical_alignment = 2
+
+[node name="AppleSpawnTimer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[node name="LoseTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_04ept")
+autoplay = true
+
+[connection signal="timeout" from="SpawnTime" to="." method="_on_spawn_time_timeout"]
+[connection signal="timeout" from="AppleSpawnTimer" to="." method="_on_apple_spawn_timer_timeout"]
+[connection signal="timeout" from="LoseTimer" to="." method="_on_lose_timer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
